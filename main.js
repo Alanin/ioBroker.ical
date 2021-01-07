@@ -408,21 +408,28 @@ function checkDates(ev, endpreview, startpreview, realnow, rule, calName, filter
         return;
     }
 
-    // If full day
-    if (!ev.start.getHours() &&
-        !ev.start.getMinutes() &&
-        !ev.start.getSeconds() &&
-        !ev.end.getHours() &&
-        !ev.end.getMinutes() &&
-        !ev.end.getSeconds()
-    ) {
-        // interpreted as one day; RFC says end date must be after start date
-        if (ev.end.getTime() === ev.start.getTime() && ev.datetype === 'date') {
-            ev.end.setDate(ev.end.getDate() + 1);
+    try {
+        // If full day
+        if (!ev.start.getHours() &&
+            !ev.start.getMinutes() &&
+            !ev.start.getSeconds() &&
+            !ev.end.getHours() &&
+            !ev.end.getMinutes() &&
+            !ev.end.getSeconds()
+        ) {
+            // interpreted as one day; RFC says end date must be after start date
+            if (ev.end.getTime() === ev.start.getTime() && ev.datetype === 'date') {
+                ev.end.setDate(ev.end.getDate() + 1);
+            }
+            if (ev.end.getTime() !== ev.start.getTime()) {
+                fullDay = true;
+            }
         }
-        if (ev.end.getTime() !== ev.start.getTime()) {
-            fullDay = true;
-        }
+    } catch(e) {
+        let newDate = new Date(ev.start[0]+ev.start[1]+ev.start[2]+ev.start[3]+'-'+ev.start[4]+ev.start[5]+'-'+ev.start[6]+ev.start[7]);
+        fullDay = true;
+        ev.start = newDate;
+        ev.end = newDate;
     }
 
     // If force Fullday is set
